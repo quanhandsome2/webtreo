@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            transition: background 0.3s, color 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            background: white;
+            text-align: center;
+        }
+        .form-control {
+            border-radius: 20px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            font-weight: bold;
+        }
+        .btn-custom {
+            border-radius: 25px;
+            padding: 12px;
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 18px;
+        }
+        .btn-custom:hover {
+            background: #0056b3;
+        }
+        .icon-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            position: fixed;
+            right: 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #musicToggle {
+            bottom: 100px;
+        }
+        #themeToggle {
+            bottom: 20px;
+        }
+        #volumeContainer {
+            position: fixed;
+            right: 20px;
+            bottom: 160px;
+            display: none;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .icon-btn:hover {
+            background: #ddd;
+        }
+        .dark-mode {
+            background-color: #222;
+            color: #fff;
+        }
+        .dark-mode .login-container {
+            background: #333;
+            color: #fff;
+        }
+        .dark-mode label, .dark-mode h2 {
+            color: #fff;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: normal;
+            color: #444;
+        }
+        .success-check {
+            display: none;
+            color: green;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 style="font-weight: bold; font-size: 24px;">PARAGON OMEGA</h2>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label" style="font-weight: bold; font-size: 18px;">Vui lòng nhập key</label>
+                <input type="text" class="form-control" id="key" required>
+                <div class="success-check">đang đi vào trang chính..</div>
+            </div>
+            <button type="submit" class="btn btn-custom">Đăng nhập</button>
+        </form>
+        <p class="mt-3">
+            <a href="https://www.facebook.com/frxkhiet" target="_blank">
+                <img src="https://i.imgur.com/cwRLogV.jpeg" alt="Facebook" width="20"> © Le Huynh Khanh Nam
+            </a>
+        </p>
+    </div>
+
+    <div class="icon-btn" id="musicToggle">🎵</div>
+    <div id="volumeContainer">
+        <input type="range" id="volumeControl" min="0" max="1" step="0.1" orient="vertical">
+    </div>
+    <div class="icon-btn" id="themeToggle">🌙</div>
+
+    <div class="footer">
+        <p>Trang web cung cấp tài nguyên và đồ chơi cho dân war coder và điều hành bởi quân và khiết.</p>
+    </div>
+
+    <script>
+        let isDarkMode = false;
+        let music = new Audio();
+        let musicList = ["https://i.imgur.com/vhPqNm8.mp4", "https://i.imgur.com/DYCukOx.mp4","https://i.imgur.com/kCLgtjj.mp4"];
+
+        document.getElementById("musicToggle").addEventListener("click", function() {
+            if (music.paused) {
+                music.src = musicList[Math.floor(Math.random() * musicList.length)];
+                music.play();
+                document.getElementById("volumeContainer").style.display = "block";
+            } else {
+                music.pause();
+                document.getElementById("volumeContainer").style.display = "none";
+            }
+        });
+
+        document.getElementById("volumeControl").addEventListener("input", function() {
+            music.volume = this.value;
+        });
+
+        document.getElementById("themeToggle").addEventListener("click", function() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle("dark-mode");
+        });
+
+        $("#loginForm").submit(function(e) {
+            e.preventDefault();
+            const key = $("#key").val();
+            $.post("/verify-key", { key }, function(response) {
+                $(".success-check").fadeIn(300);
+                setTimeout(() => {
+                    window.location.href = "/dashboard";
+                }, 1000);
+            }).fail(function() {
+                alert("Key không hợp lệ!");
+            });
+        });
+    </script>
+</body>
+</html>
